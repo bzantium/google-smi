@@ -22,7 +22,7 @@ def _get_process_name(pid: int) -> str:
 
 
 def collect_snapshot() -> TpuSnapshot:
-    from tpu_info.device import get_local_chips, get_chips, get_chip_owners, chip_path
+    from tpu_info.device import get_local_chips, get_actual_chips, get_chip_owners, chip_path
     from tpu_info.metrics import get_chip_usage
 
     chip_type, num_chips = get_local_chips()
@@ -36,7 +36,7 @@ def collect_snapshot() -> TpuSnapshot:
         )
 
     chip_type_name = chip_type.value.name
-    chips = get_chips()
+    chips = get_actual_chips()
 
     # Build device list from PCI info
     devices: list[DeviceInfo] = []
