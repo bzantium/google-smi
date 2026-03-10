@@ -218,7 +218,7 @@ def collect_snapshot() -> TpuSnapshot:
             tc_util_pct=duty,
         ))
 
-    # Process mapping
+    # Process mapping — attribute device memory to owning process
     processes: list[ProcessInfo] = []
     try:
         owners = _get_chip_owners()
@@ -230,6 +230,7 @@ def collect_snapshot() -> TpuSnapshot:
                     device_id=i,
                     pid=pid,
                     process_name=_get_process_name(pid),
+                    memory_usage_mib=int(devices[i].hbm_used_mib) if i < len(devices) else 0,
                 ))
     except Exception:
         pass

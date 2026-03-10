@@ -125,7 +125,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
 
     if snap.processes:
         for proc in snap.processes:
-            mem_str = f"{proc.memory_usage_mib}MiB" if proc.memory_usage_mib > 0 else "N/A"
+            mem_str = f"{proc.memory_usage_mib}MiB"
             lines.append(_full_row(
                 f"  {proc.device_id:<6}    {proc.pid:<6} {proc.process_type:<6} "
                 f"{proc.process_name:<40s} {mem_str}"
