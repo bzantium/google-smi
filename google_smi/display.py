@@ -68,7 +68,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     lines.append(_row(
         " TPU  Name               NUMA Node",
         " Bus-Id             IOMMU",
-        "",
+        "    PCIe",
     ))
     lines.append(_row(
         "",
@@ -103,7 +103,13 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         # Build C3 row 2: TPU-Util
         c3r2 = f"      {dev.duty_cycle_pct:5.1f}%"
 
-        lines.append(_row(_cell(c1r1, _C1), _cell(c2r1, _C2), ""))
+        # Build C3 row 1: PCIe link info
+        if dev.pcie_gen or dev.pcie_width:
+            c3r1 = f"    {dev.pcie_gen} {dev.pcie_width}".rstrip()
+        else:
+            c3r1 = ""
+
+        lines.append(_row(_cell(c1r1, _C1), _cell(c2r1, _C2), _cell(c3r1, _C3)))
         lines.append(_row(_cell(c1r2, _C1), _cell(c2r2, _C2), _cell(c3r2, _C3)))
         lines.append(_col_hline())
 

@@ -53,6 +53,8 @@ class DeviceInfo:
     iommu_group: int = 0
     pci_device_id: str = ""
     pci_subsystem_id: str = ""
+    pcie_gen: str = ""
+    pcie_width: str = ""
     hbm_used_mib: float = 0.0
     hbm_total_mib: float = 0.0
     duty_cycle_pct: float = 0.0

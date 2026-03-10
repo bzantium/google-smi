@@ -36,6 +36,39 @@ def _get_process_name(pid: int) -> str:
         return "unknown"
 
 
+_PCIE_GT_TO_GEN = {
+    "2.5": "Gen1",
+    "5": "Gen2",
+    "8": "Gen3",
+    "16": "Gen4",
+    "32": "Gen5",
+    "64": "Gen6",
+}
+
+
+def _parse_pcie_gen(link_speed: str) -> str:
+    """Map sysfs current_link_speed (e.g. '32 GT/s PCIe') to generation name."""
+    m = re.match(r"([\d.]+)\s*GT/s", link_speed)
+    if m:
+        return _PCIE_GT_TO_GEN.get(m.group(1), "")
+    return ""
+
+
+def _read_pcie_info(device_path: str) -> tuple[str, str]:
+    """Read PCIe link speed and width from sysfs. Returns (gen, width_str)."""
+    try:
+        speed = Path(os.path.join(device_path, "current_link_speed")).read_text().strip()
+        gen = _parse_pcie_gen(speed)
+    except (FileNotFoundError, PermissionError, OSError):
+        gen = ""
+    try:
+        width = Path(os.path.join(device_path, "current_link_width")).read_text().strip()
+        width_str = f"x{width}" if width else ""
+    except (FileNotFoundError, PermissionError, OSError):
+        width_str = ""
+    return gen, width_str
+
+
 def _scan_pci_devices() -> tuple[Optional[TpuChip], list[dict]]:
     """Scan sysfs for Google TPU PCI devices.
 
@@ -72,6 +105,8 @@ def _scan_pci_devices() -> tuple[Optional[TpuChip], list[dict]]:
             if ct is not None:
                 chip_type = ct
 
+            pcie_gen, pcie_width = _read_pcie_info(device_path)
+
             pci_base = pci_addr.split(".")[0]
             core_index = int(pci_addr.split(".")[-1])
 
@@ -84,6 +119,8 @@ def _scan_pci_devices() -> tuple[Optional[TpuChip], list[dict]]:
                 "numa_node": numa_node,
                 "iommu_group": iommu_group,
                 "vfio_path": f"/dev/vfio/{iommu_group}",
+                "pcie_gen": pcie_gen,
+                "pcie_width": pcie_width,
             }
             devices_by_base.setdefault(pci_base, []).append(info)
         except (IOError, ValueError):
@@ -212,6 +249,8 @@ def collect_snapshot() -> TpuSnapshot:
             iommu_group=pci["iommu_group"],
             pci_device_id=dev_id_hex,
             pci_subsystem_id=sub_id_hex,
+            pcie_gen=pci.get("pcie_gen", ""),
+            pcie_width=pci.get("pcie_width", ""),
             hbm_used_mib=used,
             hbm_total_mib=total,
             duty_cycle_pct=duty,
