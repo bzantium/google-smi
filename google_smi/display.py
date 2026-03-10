@@ -71,7 +71,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         " Device / Subsystem  ",
     ))
     lines.append(_row(
-        " Duty Cycle   TC Util",
+        " Duty Cycle",
         "     Memory-Usage    ",
         "                     ",
     ))
@@ -98,10 +98,9 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         dev_sub = f"{dev.pci_device_id:>4s} / {dev.pci_subsystem_id:<4s}"
         c3r1 = f"         {dev_sub}  "
 
-        # Build C1 row 2: "      {duty}     {tc_util}..."
+        # Build C1 row 2: "      {duty}..."
         duty_str = f"{dev.duty_cycle_pct:5.1f}%"
-        tc_str = f"{dev.tc_util_pct:5.1f}%"
-        c1r2 = f"      {duty_str}     {tc_str}"
+        c1r2 = f"      {duty_str}"
 
         # Build C2 row 2: right-aligned memory
         mem_content = f"{used}MiB / {total}MiB"

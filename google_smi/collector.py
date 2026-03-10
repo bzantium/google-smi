@@ -215,7 +215,6 @@ def collect_snapshot() -> TpuSnapshot:
             hbm_used_mib=used,
             hbm_total_mib=total,
             duty_cycle_pct=duty,
-            tc_util_pct=duty,
         ))
 
     # Process mapping — attribute device memory to owning process

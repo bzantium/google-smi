@@ -56,7 +56,6 @@ class DeviceInfo:
     hbm_used_mib: float = 0.0
     hbm_total_mib: float = 0.0
     duty_cycle_pct: float = 0.0
-    tc_util_pct: float = 0.0
 
 
 @dataclass
