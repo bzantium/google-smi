@@ -42,18 +42,6 @@ Tue Mar 04 14:23:07 2025
 - **JSON output** — machine-readable format for scripting
 - **Zero config** — auto-detects TPU devices via PCI bus scanning
 
-## Supported TPU Types
-
-| TPU | HBM per Device |
-|-----|----------------|
-| v2  | 8 GiB          |
-| v3  | 16 GiB         |
-| v4  | 32 GiB         |
-| v5e | 16 GiB         |
-| v5p | 95 GiB         |
-| v6e | 32 GiB         |
-| 7x  | 192 GiB        |
-
 ## Installation
 
 ```bash
