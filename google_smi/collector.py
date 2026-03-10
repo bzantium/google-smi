@@ -36,7 +36,7 @@ def collect_snapshot() -> TpuSnapshot:
         )
 
     chip_type_name = chip_type.value.name
-    chips = get_chips(chip_type)
+    chips = get_chips()
 
     # Build device list from PCI info
     devices: list[DeviceInfo] = []
@@ -44,7 +44,7 @@ def collect_snapshot() -> TpuSnapshot:
         devices.append(DeviceInfo(
             device_id=i,
             chip_name=f"TPU {chip_type_name}",
-            bus_id=chip.bdf,
+            bus_id=chip.base_addr,
             hbm_total_mib=chip_type.value.hbm_gib * 1024,
         ))
 
@@ -55,7 +55,7 @@ def collect_snapshot() -> TpuSnapshot:
         for i, usage in enumerate(usages):
             if i < len(devices):
                 devices[i].hbm_used_mib = usage.memory_usage / (1024 * 1024)
-                devices[i].duty_cycle_pct = usage.duty_cycle
+                devices[i].duty_cycle_pct = usage.duty_cycle_pct
     except Exception as e:
         warnings.append(f"gRPC metrics unavailable: {e}")
 
