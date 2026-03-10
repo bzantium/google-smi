@@ -68,12 +68,12 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     lines.append(_row(
         " TPU  Name               NUMA Node",
         " Bus-Id             IOMMU",
-        " Device / Subsystem  ",
+        "",
     ))
     lines.append(_row(
-        " Duty Cycle",
+        "",
         "       Memory-Usage      ",
-        "                     ",
+        "    TPU-Util",
     ))
     lines.append(_col_eq_sep())
 
@@ -94,22 +94,17 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         gap2 = _C2 - 1 - len(bus) - len(iommu) - 1
         c2r1 = f" {bus}{' ' * max(gap2, 1)}{iommu} "
 
-        # Build C3 row 1: "         {dev_id} / {sub_id}  "
-        dev_sub = f"{dev.pci_device_id:>4s} / {dev.pci_subsystem_id:<4s}"
-        c3r1 = f"         {dev_sub}  "
-
-        # Build C1 row 2: "      {duty}..."
-        duty_str = f"{dev.duty_cycle_pct:5.1f}%"
-        c1r2 = f"      {duty_str}"
+        # Build C1 row 2: empty
+        c1r2 = ""
 
         # Build C2 row 2: fixed-width memory with constant padding
         c2r2 = f" {used:7d}MiB / {total:7d}MiB "
 
-        # Build C3 row 2: empty
-        c3r2 = " " * _C3
+        # Build C3 row 2: TPU-Util
+        c3r2 = f"      {dev.duty_cycle_pct:5.1f}%"
 
-        lines.append(_row(_cell(c1r1, _C1), _cell(c2r1, _C2), _cell(c3r1, _C3)))
-        lines.append(_row(_cell(c1r2, _C1), _cell(c2r2, _C2), c3r2))
+        lines.append(_row(_cell(c1r1, _C1), _cell(c2r1, _C2), ""))
+        lines.append(_row(_cell(c1r2, _C1), _cell(c2r2, _C2), _cell(c3r2, _C3)))
         lines.append(_col_hline())
 
     # Process table

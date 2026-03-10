@@ -7,20 +7,20 @@ Tue Mar 04 14:23:07 2025
 +---------------------------------------------------------------------------------------+
 | Google-SMI 0.1.0              Driver: vfio-pci libtpu Version: 0.1.dev20250304+nightly|
 |-------------------------------------+--------------------------+----------------------|
-| TPU  Name               NUMA Node   | Bus-Id             IOMMU | Device / Subsystem   |
-| Duty Cycle                          |       Memory-Usage       |                      |
+| TPU  Name               NUMA Node   | Bus-Id             IOMMU |                      |
+|                                     |       Memory-Usage       |    TPU-Util          |
 |=====================================+==========================+======================|
-|   0  TPU v6e                    0   | 0000:00:04.0           4 |         006f / 0000  |
-|       23.4%                         |    5120MiB /   32768MiB  |                      |
+|   0  TPU v6e                    0   | 0000:00:04.0           4 |                      |
+|                                     |    5120MiB /   32768MiB  |       23.4%          |
 +-------------------------------------+--------------------------+----------------------+
-|   1  TPU v6e                    0   | 0000:00:05.0           5 |         006f / 0000  |
-|       78.2%                         |   12048MiB /   32768MiB  |                      |
+|   1  TPU v6e                    0   | 0000:00:05.0           5 |                      |
+|                                     |   12048MiB /   32768MiB  |       78.2%          |
 +-------------------------------------+--------------------------+----------------------+
-|   2  TPU v6e                    0   | 0000:00:06.0           6 |         006f / 0000  |
-|       65.7%                         |   12048MiB /   32768MiB  |                      |
+|   2  TPU v6e                    0   | 0000:00:06.0           6 |                      |
+|                                     |   12048MiB /   32768MiB  |       65.7%          |
 +-------------------------------------+--------------------------+----------------------+
-|   3  TPU v6e                    0   | 0000:00:07.0           7 |         006f / 0000  |
-|        0.0%                         |       0MiB /   32768MiB  |                      |
+|   3  TPU v6e                    0   | 0000:00:07.0           7 |                      |
+|                                     |       0MiB /   32768MiB  |        0.0%          |
 +-------------------------------------+--------------------------+----------------------+
 
 +---------------------------------------------------------------------------------------+
@@ -37,7 +37,7 @@ Tue Mar 04 14:23:07 2025
 
 - **nvidia-smi-like output** — familiar table layout for TPU monitoring
 - **HBM memory tracking** — per-device used/total high-bandwidth memory
-- **Duty cycle** — tensor core utilization percentage
+- **TPU utilization** — tensor core utilization percentage
 - **Process attribution** — maps PIDs to TPU devices with memory usage
 - **JSON output** — machine-readable format for scripting
 - **Zero config** — auto-detects TPU devices via PCI bus scanning
