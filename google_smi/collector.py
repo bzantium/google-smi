@@ -173,13 +173,38 @@ def _get_grpc_metrics(
         if not (len(totals) == len(usages) == len(duty_expanded)):
             return None
 
+        # Discover power metrics via ListSupportedMetrics
+        power_draw = None
+        power_cap = None
+        try:
+            supported = client.ListSupportedMetrics(
+                tpu_metrics.ListSupportedMetricsRequest(), timeout=2,
+            )
+            for m in supported.supported_metric:
+                name = m.metric_name.lower()
+                if "power" not in name:
+                    continue
+                if any(kw in name for kw in ("usage", "draw", "current")):
+                    power_draw = sorted_metric(m.metric_name)
+                elif any(kw in name for kw in ("cap", "limit", "max", "total")):
+                    power_cap = sorted_metric(m.metric_name)
+        except Exception:
+            pass
+
         results = []
-        for u, t, d in zip(usages, totals, duty_expanded):
-            results.append({
+        for i, (u, t, d) in enumerate(zip(usages, totals, duty_expanded)):
+            r = {
                 "memory_usage": u.gauge.as_int,
                 "total_memory": t.gauge.as_int,
                 "duty_cycle_pct": d.gauge.as_double,
-            })
+                "power_draw_w": 0.0,
+                "power_cap_w": 0.0,
+            }
+            if power_draw and i < len(power_draw):
+                r["power_draw_w"] = power_draw[i].gauge.as_double
+            if power_cap and i < len(power_cap):
+                r["power_cap_w"] = power_cap[i].gauge.as_double
+            results.append(r)
         return results
     except Exception:
         return None
@@ -229,13 +254,18 @@ def collect_snapshot() -> TpuSnapshot:
     devices: list[DeviceInfo] = []
     for i, pci in enumerate(pci_devices):
         if grpc_metrics is not None and i < len(grpc_metrics):
-            used = grpc_metrics[i]["memory_usage"] / (1024 * 1024)
-            total = grpc_metrics[i]["total_memory"] / (1024 * 1024)
-            duty = grpc_metrics[i]["duty_cycle_pct"]
+            gm = grpc_metrics[i]
+            used = gm["memory_usage"] / (1024 * 1024)
+            total = gm["total_memory"] / (1024 * 1024)
+            duty = gm["duty_cycle_pct"]
+            power_draw = gm.get("power_draw_w", 0.0)
+            power_cap = gm.get("power_cap_w", 0.0)
         else:
             used = 0.0
             total = hbm_total_mib
             duty = 0.0
+            power_draw = 0.0
+            power_cap = 0.0
 
         # Strip leading 0x from PCI IDs for display
         dev_id_hex = pci["device_id"].replace("0x", "")
@@ -251,6 +281,8 @@ def collect_snapshot() -> TpuSnapshot:
             pci_subsystem_id=sub_id_hex,
             pcie_gen=pci.get("pcie_gen", ""),
             pcie_width=pci.get("pcie_width", ""),
+            power_draw_w=power_draw,
+            power_cap_w=power_cap,
             hbm_used_mib=used,
             hbm_total_mib=total,
             duty_cycle_pct=duty,

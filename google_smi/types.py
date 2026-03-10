@@ -55,6 +55,8 @@ class DeviceInfo:
     pci_subsystem_id: str = ""
     pcie_gen: str = ""
     pcie_width: str = ""
+    power_draw_w: float = 0.0
+    power_cap_w: float = 0.0
     hbm_used_mib: float = 0.0
     hbm_total_mib: float = 0.0
     duty_cycle_pct: float = 0.0

@@ -64,16 +64,20 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     # Column header separator (nvidia-smi style with outer |)
     lines.append(_header_sep())
 
+    # Check if any device has power data
+    has_power = any(d.power_draw_w > 0 or d.power_cap_w > 0 for d in snap.devices)
+
     # Column headers
     lines.append(_row(
         " TPU  Name               NUMA Node",
-        " Bus-Id             IOMMU",
-        "    PCIe",
+        " Bus-Id            IOMMU ",
+        "          PCIe        ",
     ))
+    c1r2_hdr = f"{'Pwr:Usage/Cap':>{_C1 - 3}}   " if has_power else ""
     lines.append(_row(
-        "",
+        c1r2_hdr,
         "       Memory-Usage      ",
-        "    TPU-Util",
+        "      TPU-Util        ",
     ))
     lines.append(_col_eq_sep())
 
@@ -91,23 +95,26 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         # Build C2 row 1: " {bus_id}...{iommu} "
         bus = dev.bus_id
         iommu = str(dev.iommu_group)
-        gap2 = _C2 - 1 - len(bus) - len(iommu) - 1
-        c2r1 = f" {bus}{' ' * max(gap2, 1)}{iommu} "
+        gap2 = _C2 - 1 - len(bus) - len(iommu) - 2
+        c2r1 = f" {bus}{' ' * max(gap2, 1)}{iommu}  "
 
-        # Build C1 row 2: empty
-        c1r2 = ""
+        # Build C1 row 2: Pwr:Usage/Cap (if available)
+        if has_power:
+            pwr = f"{dev.power_draw_w:.0f}W / {dev.power_cap_w:.0f}W"
+            c1r2 = f"{pwr:>{_C1 - 3}}   "
+        else:
+            c1r2 = ""
 
         # Build C2 row 2: fixed-width memory with constant padding
         c2r2 = f" {used:7d}MiB / {total:7d}MiB "
 
-        # Build C3 row 2: TPU-Util
-        c3r2 = f"      {dev.duty_cycle_pct:5.1f}%"
+        # Build C3 row 1: PCIe link info (right-aligned, 8 trailing)
+        pcie_text = f"{dev.pcie_gen} {dev.pcie_width}".strip()
+        c3r1 = f"{pcie_text:>{_C3 - 8}}        " if pcie_text else ""
 
-        # Build C3 row 1: PCIe link info
-        if dev.pcie_gen or dev.pcie_width:
-            c3r1 = f"    {dev.pcie_gen} {dev.pcie_width}".rstrip()
-        else:
-            c3r1 = ""
+        # Build C3 row 2: TPU-Util (right-aligned, 8 trailing)
+        c3r2 = f"{dev.duty_cycle_pct:.1f}%"
+        c3r2 = f"{c3r2:>{_C3 - 8}}        "
 
         lines.append(_row(_cell(c1r1, _C1), _cell(c2r1, _C2), _cell(c3r1, _C3)))
         lines.append(_row(_cell(c1r2, _C1), _cell(c2r2, _C2), _cell(c3r2, _C3)))
