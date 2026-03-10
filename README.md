@@ -40,7 +40,6 @@ Tue Mar 04 14:23:07 2025
 - **Duty cycle** — tensor core utilization percentage
 - **Process attribution** — maps PIDs to TPU devices with memory usage
 - **JSON output** — machine-readable format for scripting
-- **Loop mode** — continuous monitoring with configurable refresh interval
 - **Zero config** — auto-detects TPU devices via PCI bus scanning
 
 ## Supported TPU Types
@@ -64,20 +63,13 @@ pip install git+https://github.com/bzantium/google-smi.git
 ## Usage
 
 ```bash
-# Single snapshot
 google-smi
 
-# Continuous monitoring (refresh every 1s)
-google-smi -l
-
-# Custom refresh interval (every 5s)
-google-smi -l 5
+# Continuous monitoring
+watch -n 1 google-smi
 
 # JSON output
 google-smi --json
-
-# JSON + loop
-google-smi -l --json
 ```
 
 ## Output Fields
