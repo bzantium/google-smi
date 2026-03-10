@@ -5,6 +5,8 @@ import sys
 import time
 
 from google_smi import __version__
+from google_smi.collector import collect_snapshot
+from google_smi.display import format_snapshot, format_json
 
 
 def main() -> None:
@@ -32,14 +34,6 @@ def main() -> None:
         version=f"google-smi {__version__}",
     )
     args = parser.parse_args()
-
-    try:
-        from google_smi.collector import collect_snapshot
-    except ImportError:
-        print("Error: tpu-info package is required. Install with: pip install tpu-info", file=sys.stderr)
-        sys.exit(1)
-
-    from google_smi.display import format_snapshot, format_json
 
     def _run_once() -> int:
         snap = collect_snapshot()

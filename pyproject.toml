@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "google-smi"
-version = "0.1.0"
+version = "0.2.0"
 description = "nvidia-smi-style TPU monitor CLI"
 requires-python = ">=3.10"
 dependencies = [
-    "tpu-info>=0.8.0",
+    "protobuf>=4.25",
     "grpcio",
 ]
 
