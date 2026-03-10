@@ -5,7 +5,7 @@ TPU counterpart of `nvidia-smi`. Real-time HBM usage, duty cycle, and process at
 ```
 Tue Mar 04 14:23:07 2025
 +---------------------------------------------------------------------------------------+
-| Google-SMI 0.2.0              Driver: vfio-pci libtpu Version: 0.1.dev20250304+nightly|
+| Google-SMI 0.1.0              Driver: vfio-pci libtpu Version: 0.1.dev20250304+nightly|
 |-------------------------------------+--------------------------+----------------------|
 | TPU  Name               NUMA Node   | Bus-Id             IOMMU | Device / Subsystem   |
 | Duty Cycle                          |       Memory-Usage       |                      |
