@@ -55,19 +55,11 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     # Per-device rows
     for dev in snap.devices:
         # Memory string
-        if dev.hbm_used_mib is not None and dev.hbm_total_mib is not None:
-            mem = f"{int(dev.hbm_used_mib)}MiB / {int(dev.hbm_total_mib)}MiB"
-        elif dev.hbm_total_mib is not None:
-            mem = f"N/A / {int(dev.hbm_total_mib)}MiB"
-        else:
-            mem = "N/A"
+        mem = f"{int(dev.hbm_used_mib)}MiB / {int(dev.hbm_total_mib)}MiB"
         mem_str = f"    {mem}     "
 
         # Duty cycle string
-        if dev.duty_cycle_pct is not None:
-            duty = f"{dev.duty_cycle_pct:.2f}%"
-        else:
-            duty = "N/A"
+        duty = f"{dev.duty_cycle_pct:.2f}%"
 
         # Row 1: device id, chip name, bus id, memory
         lines.append(_row(

@@ -38,26 +38,33 @@ def collect_snapshot() -> TpuSnapshot:
     chip_type_name = chip_type.value.name
     chips = get_actual_chips()
 
-    # Build device list from PCI info
+    hbm_total_mib = chip_type.value.hbm_gib * 1024
+
+    # Try gRPC metrics first
+    warnings: list[str] = []
+    usages: list | None = None
+    try:
+        usages = get_chip_usage(chip_type)
+    except Exception:
+        pass  # runtime not active — default to 0
+
+    # Build device list from PCI info + metrics
     devices: list[DeviceInfo] = []
     for i, chip in enumerate(chips):
+        if usages is not None and i < len(usages):
+            used = usages[i].memory_usage / (1024 * 1024)
+            duty = usages[i].duty_cycle_pct
+        else:
+            used = 0.0
+            duty = 0.0
         devices.append(DeviceInfo(
             device_id=i,
             chip_name=f"TPU {chip_type_name}",
             bus_id=chip.base_addr,
-            hbm_total_mib=chip_type.value.hbm_gib * 1024,
+            hbm_used_mib=used,
+            hbm_total_mib=hbm_total_mib,
+            duty_cycle_pct=duty,
         ))
-
-    # Overlay gRPC metrics (memory + duty cycle)
-    warnings: list[str] = []
-    try:
-        usages = get_chip_usage(chip_type)
-        for i, usage in enumerate(usages):
-            if i < len(devices):
-                devices[i].hbm_used_mib = usage.memory_usage / (1024 * 1024)
-                devices[i].duty_cycle_pct = usage.duty_cycle_pct
-    except Exception as e:
-        warnings.append(f"gRPC metrics unavailable: {e}")
 
     # Process mapping
     processes: list[ProcessInfo] = []
