@@ -16,7 +16,7 @@ def main() -> None:
     )
     parser.add_argument(
         "-l", "--loop",
-        type=int,
+        type=float,
         nargs="?",
         const=1,
         default=None,
