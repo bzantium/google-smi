@@ -59,28 +59,3 @@ watch -n 1 google-smi
 # JSON output
 google-smi --json
 ```
-
-## Output Fields
-
-### Device Table
-
-| Field              | Description                          |
-|--------------------|--------------------------------------|
-| TPU                | Device index                         |
-| Name               | Chip generation (e.g. TPU v6e)       |
-| NUMA Node          | NUMA node assignment                 |
-| Bus-Id             | PCI bus address                      |
-| IOMMU              | IOMMU group number                   |
-| Device / Subsystem | PCI device and subsystem IDs         |
-| Duty Cycle         | Tensor core utilization (%)          |
-| Memory-Usage       | HBM used / total (MiB)              |
-
-### Process Table
-
-| Field        | Description                            |
-|--------------|----------------------------------------|
-| TPU          | Device index                           |
-| PID          | Process ID                             |
-| Type         | Process type (C = Compute)             |
-| Process name | Executable name                        |
-| Memory Usage | HBM memory used by process (MiB)      |
