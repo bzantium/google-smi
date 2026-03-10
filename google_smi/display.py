@@ -8,8 +8,8 @@ from google_smi.types import TpuSnapshot
 
 # Column widths (inner content, excluding border chars)
 # C1=41, C2=22, C3=22  →  total inner = 87, with borders = 89
-_C1 = 41
-_C2 = 22
+_C1 = 37
+_C2 = 26
 _C3 = 22
 _W = _C1 + _C2 + _C3 + 2  # +2 for the two inner `|` chars = 87
 
@@ -66,13 +66,13 @@ def format_snapshot(snap: TpuSnapshot) -> str:
 
     # Column headers
     lines.append(_row(
-        " TPU  Name                   NUMA Node",
-        " Bus-Id         IOMMU",
+        " TPU  Name               NUMA Node",
+        " Bus-Id             IOMMU",
         " Device / Subsystem  ",
     ))
     lines.append(_row(
         " Duty Cycle",
-        "     Memory-Usage    ",
+        "       Memory-Usage      ",
         "                     ",
     ))
     lines.append(_col_eq_sep())
@@ -102,9 +102,8 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         duty_str = f"{dev.duty_cycle_pct:5.1f}%"
         c1r2 = f"      {duty_str}"
 
-        # Build C2 row 2: right-aligned memory
-        mem_content = f"{used}MiB / {total}MiB"
-        c2r2 = f"{mem_content:>{_C2 - 2}}  "
+        # Build C2 row 2: fixed-width memory with constant padding
+        c2r2 = f" {used:7d}MiB / {total:7d}MiB "
 
         # Build C3 row 2: empty
         c3r2 = " " * _C3
