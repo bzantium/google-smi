@@ -125,7 +125,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     lines.append(_full_hline())
     lines.append(_full_row("Processes:"))
     lines.append(_full_row(
-        " TPU        PID   Type   Process name                             Memory Usage       "
+        "TPU         PID    Type      Process name                         Memory Usage"
     ))
     lines.append(_full_eq_sep())
 
@@ -133,8 +133,8 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         for proc in snap.processes:
             mem_str = f"{proc.memory_usage_mib}MiB"
             lines.append(_full_row(
-                f"  {proc.device_id:<6}    {proc.pid:<6} {proc.process_type:<6} "
-                f"{proc.process_name:<40s} {mem_str}"
+                f"{proc.device_id:>3}     {proc.pid:>7}       "
+                f"{proc.process_type}      {proc.process_name:<42}{mem_str:>7}"
             ))
     else:
         lines.append(_full_row(" No running processes found"))
