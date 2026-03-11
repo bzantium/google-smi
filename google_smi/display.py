@@ -58,7 +58,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     header = f"Google-SMI {snap.tool_version}"
     driver = f"Driver: {snap.driver_version}"
     libtpu = f"libtpu Version: {snap.libtpu_version}"
-    mid = f"{header:<22}{driver:<17}{libtpu}"
+    mid = f"{header:<24}{driver:<17}{libtpu}"
     lines.append(_full_row(mid))
 
     # Column header separator (nvidia-smi style with outer |)
@@ -134,7 +134,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
             mem_str = f"{proc.memory_usage_mib}MiB"
             lines.append(_full_row(
                 f"{proc.device_id:>3}     {proc.pid:>7}       "
-                f"{proc.process_type}      {proc.process_name:<42}{mem_str:>7}"
+                f"{proc.process_type}      {proc.process_name:<42}{mem_str:>8}"
             ))
     else:
         lines.append(_full_row("  No running processes found"))
