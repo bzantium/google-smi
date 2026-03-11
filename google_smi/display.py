@@ -134,7 +134,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
             mem_str = f"{proc.memory_usage_mib}MiB"
             lines.append(_full_row(
                 f"{proc.device_id:>3}     {proc.pid:>7}       "
-                f"{proc.process_type}      {proc.process_name:<42}{mem_str:>8}"
+                f"{proc.process_type}      {proc.process_name:<42}{mem_str:>7}"
             ))
     else:
         lines.append(_full_row("  No running processes found"))
