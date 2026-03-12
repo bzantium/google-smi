@@ -54,8 +54,14 @@ pip install git+https://github.com/bzantium/google-smi.git
 google-smi
 
 # Continuous monitoring
-watch -n 1 google-smi
+google-smi -i
+google-smi -i 0.5
 
 # JSON output
 google-smi --json
 ```
+
+Options:
+
+- `-i`, `--interval`, `--watch`: refresh continuously with an in-place redraw
+- `--json`: emit machine-readable JSON output

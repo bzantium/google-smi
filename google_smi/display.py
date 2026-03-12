@@ -64,18 +64,14 @@ def format_snapshot(snap: TpuSnapshot) -> str:
     # Column header separator (nvidia-smi style with outer |)
     lines.append(_header_sep())
 
-    # Check if any device has power data
-    has_power = any(d.power_draw_w > 0 or d.power_cap_w > 0 for d in snap.devices)
-
     # Column headers
     lines.append(_row(
         " TPU  Name               NUMA Node",
         " Bus-Id            IOMMU ",
         "          PCIe        ",
     ))
-    c1r2_hdr = f"{'Pwr:Usage/Cap':>{_C1 - 3}}   " if has_power else ""
     lines.append(_row(
-        c1r2_hdr,
+        "",
         "       Memory-Usage      ",
         "      TPU-Util        ",
     ))
@@ -98,12 +94,7 @@ def format_snapshot(snap: TpuSnapshot) -> str:
         gap2 = _C2 - 1 - len(bus) - len(iommu) - 2
         c2r1 = f" {bus}{' ' * max(gap2, 1)}{iommu}  "
 
-        # Build C1 row 2: Pwr:Usage/Cap (if available)
-        if has_power:
-            pwr = f"{dev.power_draw_w:.0f}W / {dev.power_cap_w:.0f}W"
-            c1r2 = f"{pwr:>{_C1 - 3}}   "
-        else:
-            c1r2 = ""
+        c1r2 = ""
 
         # Build C2 row 2: fixed-width memory with constant padding
         c2r2 = f" {used:7d}MiB / {total:7d}MiB "
