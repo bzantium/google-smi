@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from io import StringIO
 
 import pytest
 
@@ -61,6 +62,28 @@ def test_cli_no_devices_returns_error(monkeypatch, capsys, sample_snapshot):
 
     assert exc.value.code == 1
     assert "No TPU devices found." in captured.err
+
+
+def test_write_tty_frame_clears_stale_line_content(monkeypatch):
+    buf = StringIO()
+
+    monkeypatch.setattr(cli, "_move_cursor_home", lambda: buf.write("\033[H"))
+    monkeypatch.setattr(cli, "_clear_to_end", lambda: buf.write("\033[J"))
+    monkeypatch.setattr(cli.sys, "stdout", buf)
+
+    line_count = cli._write_tty_frame(
+        "header\nrow pid(5758M) train.py(5758M)\n",
+        previous_line_count=0,
+    )
+    line_count = cli._write_tty_frame(
+        "header\nrow idle\n",
+        previous_line_count=line_count,
+    )
+
+    output = buf.getvalue()
+    assert line_count == 2
+    assert "\033[2Krow idle\n" in output
+    assert "idle5758M) train.py(5758M)" not in output
 
 
 def test_watch_returns_zero_on_keyboard_interrupt(monkeypatch):

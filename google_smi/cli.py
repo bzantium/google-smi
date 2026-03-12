@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 import time
+from io import StringIO
 
 from google_smi import __version__
 from google_smi.collector import collect_snapshot
@@ -41,20 +42,47 @@ def _render(*, as_json: bool, show_detail: bool) -> int:
     return 0
 
 
+def _render_frame(*, show_detail: bool) -> tuple[int, str]:
+    snap = collect_snapshot()
+    if snap.num_chips == 0:
+        return 1, ""
+    buf = StringIO()
+    buf.write(format_snapshot(snap, show_detail=show_detail))
+    buf.write("\n")
+    return 0, buf.getvalue()
+
+
+def _write_tty_frame(frame: str, previous_line_count: int) -> int:
+    lines = frame.splitlines()
+    _move_cursor_home()
+    for line in lines:
+        sys.stdout.write("\033[2K")
+        sys.stdout.write(line)
+        sys.stdout.write("\n")
+    for _ in range(max(0, previous_line_count - len(lines))):
+        sys.stdout.write("\033[2K\n")
+    _clear_to_end()
+    return len(lines)
+
+
 def _watch(interval: float, *, show_detail: bool) -> int:
     is_tty = bool(getattr(sys.stdout, "isatty", lambda: False)())
+    previous_line_count = 0
     try:
         if is_tty:
             _clear_screen()
             _hide_cursor()
         while True:
             if is_tty:
-                _move_cursor_home()
-            exit_code = _render(as_json=False, show_detail=show_detail)
-            if exit_code != 0:
-                return exit_code
-            if is_tty:
-                _clear_to_end()
+                exit_code, frame = _render_frame(show_detail=show_detail)
+                if exit_code != 0:
+                    print("No TPU devices found.", file=sys.stderr)
+                    return exit_code
+                previous_line_count = _write_tty_frame(frame, previous_line_count)
+            else:
+                exit_code = _render(as_json=False, show_detail=show_detail)
+                if exit_code != 0:
+                    return exit_code
             sys.stdout.flush()
             time.sleep(interval)
     except KeyboardInterrupt:
