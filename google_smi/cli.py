@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "-d", "--detail",
         action="store_true",
-        help="show bus, IOMMU, and PCIe detail columns",
+        help="show bus and IOMMU detail columns; include PCIe when available",
     )
     parser.add_argument(
         "-i", "--interval", "--watch",

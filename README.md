@@ -36,6 +36,9 @@ pip install git+https://github.com/bzantium/google-smi.git
 # default table view
 google-smi
 
+# show Bus-Id / IOMMU detail columns
+google-smi -d
+
 # refresh in place every second
 google-smi -i
 
