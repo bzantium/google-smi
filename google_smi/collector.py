@@ -54,6 +54,14 @@ def _parse_pcie_gen(link_speed: str) -> str:
     return ""
 
 
+def _parse_pcie_width(raw_width: str) -> str:
+    """Map sysfs current_link_width to a display string, hiding invalid placeholders."""
+    width = raw_width.strip()
+    if width in {"", "0", "255"}:
+        return ""
+    return f"x{width}"
+
+
 def _read_pcie_info(device_path: str) -> tuple[str, str]:
     """Read PCIe link speed and width from sysfs. Returns (gen, width_str)."""
     try:
@@ -63,7 +71,7 @@ def _read_pcie_info(device_path: str) -> tuple[str, str]:
         gen = ""
     try:
         width = Path(os.path.join(device_path, "current_link_width")).read_text().strip()
-        width_str = f"x{width}" if width else ""
+        width_str = _parse_pcie_width(width)
     except (FileNotFoundError, PermissionError, OSError):
         width_str = ""
     return gen, width_str

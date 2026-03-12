@@ -45,16 +45,3 @@ google-smi -i 0.5
 # machine-readable output
 google-smi --json
 ```
-
-## What It Shows
-
-- TPU device index, name, NUMA node, PCI bus ID, IOMMU group, and PCIe link information
-- HBM usage per TPU device
-- TPU duty cycle / utilization
-- Process attribution with PID, process name, and device memory usage
-
-## Notes
-
-- `-i`, `--interval`, and `--watch` refresh continuously with an in-place redraw rather than shelling out to `watch`.
-- `--json` is intended for scripting and integrations.
-- Output depends on local TPU discovery and available runtime metrics.
