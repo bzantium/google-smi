@@ -27,7 +27,7 @@ Thu Mar 12 01:58:21 2026
 ## Install
 
 ```bash
-pip install git+https://github.com/bzantium/google-smi.git
+pip install google-smi
 ```
 
 ## Quick Start
