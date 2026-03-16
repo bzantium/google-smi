@@ -75,9 +75,9 @@ def format_snapshot(snap: TpuSnapshot, *, show_detail: bool = False) -> str:
     # Header box
     lines.append(_full_hline())
     header = f"Google-SMI {snap.tool_version}"
-    driver = f"Driver: {snap.driver_version}"
-    libtpu = f"libtpu Version: {snap.libtpu_version}"
-    mid = f"{header:<24}{driver:<17}{libtpu}"
+    driver = f"Driver Version: {snap.driver_version}"
+    libtpu = f"LIBTPU Version: {snap.libtpu_version}"
+    mid = f"{header:<24}{driver}   {libtpu}"
     lines.append(_full_row(mid))
 
     if show_detail:

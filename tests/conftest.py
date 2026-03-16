@@ -20,7 +20,7 @@ def sample_snapshot() -> TpuSnapshot:
         libtpu_version="0.0.17",
         chip_type_name="v6e",
         num_chips=2,
-        driver_version="vfio-pci",
+        driver_version="6.8.0-1015-gcp",
         devices=[
             DeviceInfo(
                 device_id=0,

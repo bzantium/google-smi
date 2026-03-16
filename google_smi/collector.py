@@ -313,14 +313,8 @@ def collect_snapshot() -> TpuSnapshot:
     except Exception:
         pass
 
-    # Detect driver
-    driver_version = "vfio-pci"
-    if pci_devices:
-        driver_link = f"/sys/bus/pci/devices/{pci_devices[0]['full_addr']}/driver"
-        try:
-            driver_version = os.path.basename(os.readlink(driver_link))
-        except (FileNotFoundError, OSError):
-            pass
+    # Use kernel version as driver version
+    driver_version = os.uname().release
 
     return TpuSnapshot(
         tool_version=__version__,
